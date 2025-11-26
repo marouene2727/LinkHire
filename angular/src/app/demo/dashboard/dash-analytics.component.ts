@@ -1,6 +1,7 @@
 // angular import
 import { Component, viewChild, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 
 // project import
 import { SharedModule } from 'src/app/theme/shared/shared.module';
@@ -11,7 +12,7 @@ import { ApplicationService, DashboardStats, Application } from '../../services/
 import { ApexOptions, ChartComponent, NgApexchartsModule } from 'ng-apexcharts';
 @Component({
   selector: 'app-dash-analytics',
-  imports: [SharedModule, NgApexchartsModule, ProductSaleComponent, CommonModule],
+  imports: [SharedModule, NgApexchartsModule, ProductSaleComponent, CommonModule, RouterModule],
   templateUrl: './dash-analytics.component.html',
   styleUrls: ['./dash-analytics.component.scss']
 })

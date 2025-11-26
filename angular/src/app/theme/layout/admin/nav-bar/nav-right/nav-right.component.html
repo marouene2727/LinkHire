@@ -3,81 +3,62 @@
     <div class="dropdown" ngbDropdown placement="auto">
       <a ngbDropdownToggle href="javascript:">
         <i class="icon feather icon-bell" title="Notification"></i>
-        <span class="badge bg-danger"><span class="sr-only"></span></span>
+        @if (totalUnreadCount > 0) {
+          <span class="badge bg-danger">{{ totalUnreadCount }}</span>
+        }
       </a>
       <div ngbDropdownMenu class="dropdown-menu dropdown-menu-end notification">
         <div class="noti-head">
           <h6 class="d-inline-block m-b-0">Notifications</h6>
           <div class="float-end">
-            <a href="javascript:" class="m-r-10">mark as read</a>
-            <a href="javascript:">clear all</a>
+            @if (totalUnreadCount > 0) {
+              <a href="javascript:" class="m-r-10" (click)="markAllAsRead()">Tout marquer lu</a>
+            }
           </div>
         </div>
         <ul class="noti-body">
-          <li class="n-title">
-            <p class="m-b-0">NEW</p>
-          </li>
-          <li class="notification">
-            <div class="media">
-              <img class="img-radius" src="assets/images/user/avatar-1.jpg" alt="Generic placeholder image" />
-              <div class="media-body">
-                <p>
-                  <strong>John Doe</strong>
-                  <span class="n-time text-muted">
-                    <i class="icon feather icon-clock m-r-10"></i>
-                    30 min
-                  </span>
-                </p>
-                <p>New ticket Added</p>
+          @if (notifications.length > 0) {
+            @for (notification of notifications; track notification.jobOfferId) {
+              <li class="notification">
+                <a [routerLink]="getNotificationLink(notification)" 
+                   (click)="markJobOfferAsRead(notification.jobOfferId)" 
+                   class="text-decoration-none text-dark">
+                  <div class="media">
+                    <div class="avtar avtar-s bg-light-primary">
+                      <i class="feather icon-briefcase"></i>
+                    </div>
+                    <div class="media-body">
+                      <p>
+                        <strong>{{ notification.jobOfferTitle }}</strong>
+                        <span class="n-time text-muted">
+                          <i class="icon feather icon-clock m-r-10"></i>
+                          {{ getTimeAgo(notification.latestApplicationDate) }}
+                        </span>
+                      </p>
+                      <p>
+                        {{ notification.unreadCount }} nouvelle{{ notification.unreadCount > 1 ? 's' : '' }} candidature{{ notification.unreadCount > 1 ? 's' : '' }}
+                        <span class="badge bg-primary ms-2">{{ notification.unreadCount }}</span>
+                      </p>
+                    </div>
+                  </div>
+                </a>
+              </li>
+            }
+          } @else {
+            <li class="notification text-center py-3">
+              <div class="text-muted">
+                <i class="feather icon-bell-off f-20"></i>
+                <p class="mt-2 mb-0">Aucune nouvelle notification</p>
               </div>
-            </div>
-          </li>
-          <li class="n-title">
-            <p class="m-b-0">EARLIER</p>
-          </li>
-          <li class="notification">
-            <div class="media">
-              <img class="img-radius" src="assets/images/user/avatar-2.jpg" alt="Generic placeholder image" />
-              <div class="media-body">
-                <p>
-                  <strong>Joseph William</strong>
-                  <span class="n-time text-muted">
-                    <i class="icon feather icon-clock m-r-10"></i>
-                    30 min
-                  </span>
-                </p>
-                <p>Purchase New Theme and make payment</p>
-              </div>
-            </div>
-          </li>
-          <li class="notification">
-            <div class="media">
-              <img class="img-radius" src="assets/images/user/avatar-3.jpg" alt="Generic placeholder image" />
-              <div class="media-body">
-                <p>
-                  <strong>Sara Soudein</strong>
-                  <span class="n-time text-muted">
-                    <i class="icon feather icon-clock m-r-10"></i>
-                    30 min
-                  </span>
-                </p>
-                <p>currently login</p>
-              </div>
-            </div>
-          </li>
+            </li>
+          }
         </ul>
-        <div class="noti-footer">
-          <a href="javascript:">show all</a>
-        </div>
+        @if (notifications.length > 0) {
+          <div class="noti-footer">
+            <a [routerLink]="['/applications']">Voir toutes les candidatures</a>
+          </div>
+        }
       </div>
-    </div>
-  </li>
-  <li (click)="this.visibleUserList = !this.visibleUserList">
-    <div class="dropdown">
-      <a href="javascript:" class="displayChatbox dropdown-toggle">
-        <i class="icon feather icon-mail" title="Mail InBox"></i>
-        <span class="badge bg-success"><span class="sr-only"></span></span>
-      </a>
     </div>
   </li>
   <li>
@@ -101,19 +82,7 @@
             </a>
           </li>
           <li>
-            <a href="javascript:" class="dropdown-item">
-              <i class="feather icon-mail"></i>
-              My Messages
-            </a>
-          </li>
-          <li>
-            <a href="javascript:" class="dropdown-item">
-              <i class="feather icon-lock"></i>
-              Lock Screen
-            </a>
-          </li>
-          <li>
-            <a href="javascript:" class="dropdown-item">
+            <a href="javascript:" class="dropdown-item" (click)="logout()">
               <i class="feather icon-lock"></i>
               Logout
             </a>

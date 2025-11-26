@@ -227,6 +227,24 @@ public class ApplicationController {
         }
     }
     
+    @GetMapping("/notifications/unread")
+    public ResponseEntity<List<Map<String, Object>>> getUnreadNotifications() {
+        List<Map<String, Object>> notifications = applicationService.getUnreadNotifications();
+        return ResponseEntity.ok(notifications);
+    }
+    
+    @PostMapping("/notifications/mark-all-read")
+    public ResponseEntity<Void> markAllNotificationsAsRead() {
+        applicationService.markAllNotificationsAsRead();
+        return ResponseEntity.ok().build();
+    }
+    
+    @PostMapping("/notifications/mark-job-offer-read/{jobOfferId}")
+    public ResponseEntity<Void> markJobOfferNotificationsAsRead(@PathVariable Long jobOfferId) {
+        applicationService.markJobOfferNotificationsAsRead(jobOfferId);
+        return ResponseEntity.ok().build();
+    }
+    
     private Map<String, Object> mapToListItem(Application app) {
         Map<String, Object> item = new java.util.HashMap<>();
         item.put("id", app.getId());

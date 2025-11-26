@@ -1,0 +1,11 @@
+pr demarrer les projets bakcendd et fronent
+
+
+cd angular
+npm start
+
+
+cd backend
+mvnw.cmd clean compile (faire "rmdir /s /q target" avant en cas d'erreur)
+
+mvnw.cmd spring-boot:run

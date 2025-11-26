@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -379,5 +380,34 @@ public class ApplicationService {
         );
         
         log.info("Contact candidat pour candidature {} avec sujet: {}", id, subject);
+    }
+    
+    public List<Map<String, Object>> getUnreadNotifications() {
+        List<Object[]> results = applicationRepository.findUnreadNotificationsByJobOffer();
+        return results.stream()
+                .map(row -> {
+                    Map<String, Object> notification = new java.util.HashMap<>();
+                    notification.put("jobOfferId", row[0]);
+                    notification.put("jobOfferTitle", row[1]);
+                    notification.put("unreadCount", row[2]);
+                    notification.put("latestApplicationDate", row[3]);
+                    if (row[4] != null) {
+                        notification.put("singleApplicationId", row[4]);
+                    }
+                    return notification;
+                })
+                .collect(java.util.stream.Collectors.toList());
+    }
+    
+    @Transactional
+    public void markJobOfferNotificationsAsRead(Long jobOfferId) {
+        applicationRepository.markJobOfferApplicationsAsViewed(jobOfferId);
+        log.info("Notifications de l'offre {} marquées comme lues", jobOfferId);
+    }
+    
+    @Transactional
+    public void markAllNotificationsAsRead() {
+        applicationRepository.markAllApplicationsAsViewed();
+        log.info("Toutes les notifications ont été marquées comme lues");
     }
 }

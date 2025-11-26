@@ -2,6 +2,7 @@ package com.recruitment.candidatemanagement.repository;
 
 import com.recruitment.candidatemanagement.entity.Application;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -78,4 +79,25 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
            "WHERE a.jobOffer.id = :jobOfferId AND a.status = :status " +
            "ORDER BY a.receivedAt DESC")
     List<Application> findByJobOfferIdAndStatus(@Param("jobOfferId") Long jobOfferId, @Param("status") Application.ApplicationStatus status);
+    
+    @Query(value = "SELECT jo.id, jo.title, COUNT(a.id) as unread_count, MAX(a.received_at) as latest_date, " +
+           "CASE WHEN COUNT(a.id) = 1 THEN MIN(a.id) ELSE NULL END as single_application_id " +
+           "FROM applications a " +
+           "JOIN job_offers jo ON a.job_offer_id = jo.id " +
+           "WHERE (a.viewed_by_recruiter IS NULL OR a.viewed_by_recruiter = false) " +
+           "AND (a.archived IS NULL OR a.archived = false) " +
+           "GROUP BY jo.id, jo.title " +
+           "HAVING COUNT(a.id) > 0 " +
+           "ORDER BY latest_date DESC", nativeQuery = true)
+    List<Object[]> findUnreadNotificationsByJobOffer();
+    
+    @Modifying
+    @Query("UPDATE Application a SET a.viewedByRecruiter = true, a.viewedAt = CURRENT_TIMESTAMP " +
+           "WHERE a.jobOffer.id = :jobOfferId AND (a.viewedByRecruiter IS NULL OR a.viewedByRecruiter = false)")
+    void markJobOfferApplicationsAsViewed(@Param("jobOfferId") Long jobOfferId);
+    
+    @Modifying
+    @Query("UPDATE Application a SET a.viewedByRecruiter = true, a.viewedAt = CURRENT_TIMESTAMP " +
+           "WHERE a.viewedByRecruiter IS NULL OR a.viewedByRecruiter = false")
+    void markAllApplicationsAsViewed();
 }

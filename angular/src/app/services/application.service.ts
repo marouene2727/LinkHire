@@ -67,4 +67,16 @@ export class ApplicationService {
   addRecruiterNotes(id: number, notes: string): Observable<Application> {
     return this.http.put<Application>(`${this.apiUrl}/applications/${id}/notes`, { notes });
   }
+
+  getUnreadNotifications(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/applications/notifications/unread`);
+  }
+
+  markAllNotificationsAsRead(): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/applications/notifications/mark-all-read`, {});
+  }
+
+  markJobOfferNotificationsAsRead(jobOfferId: number): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/applications/notifications/mark-job-offer-read/${jobOfferId}`, {});
+  }
 }

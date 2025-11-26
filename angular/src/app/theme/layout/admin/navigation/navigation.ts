@@ -58,12 +58,12 @@ export const NavigationItems: NavigationItem[] = [
             type: 'item',
             url: '/applications/validated'
           },
-          {
-            id: 'ambiguous',
-            title: 'Ambiguës',
-            type: 'item',
-            url: '/applications/ambiguous'
-          },
+          // {
+          //   id: 'ambiguous',
+          //   title: 'Ambiguës',
+          //   type: 'item',
+          //   url: '/applications/ambiguous'
+          // },
           {
             id: 'rejected',
             title: 'Rejetées',

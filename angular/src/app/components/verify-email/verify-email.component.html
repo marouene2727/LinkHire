@@ -1,0 +1,50 @@
+<div class="auth-wrapper">
+  <div class="auth-content">
+    <div class="card">
+      <div class="card-body text-center">
+        
+        <!-- Loading -->
+        <div *ngIf="loading" class="mb-4">
+          <div class="spinner-border text-primary mb-3" role="status">
+            <span class="visually-hidden">Vérification...</span>
+          </div>
+          <h4>Vérification de votre email...</h4>
+          <p class="text-muted">Veuillez patienter</p>
+        </div>
+
+        <!-- Success -->
+        <div *ngIf="success && !loading" class="mb-4">
+          <div class="mb-4">
+            <i class="feather icon-check-circle text-success" style="font-size: 4rem;"></i>
+          </div>
+          <h3 class="text-success mb-3">Email vérifié !</h3>
+          <p class="mb-4">
+            Votre compte a été activé avec succès.<br>
+            Vous allez être redirigé vers la page de connexion...
+          </p>
+          <button class="btn btn-primary" (click)="goToLogin()">
+            Se connecter maintenant
+          </button>
+        </div>
+
+        <!-- Error -->
+        <div *ngIf="error && !loading" class="mb-4">
+          <div class="mb-4">
+            <i class="feather icon-x-circle text-danger" style="font-size: 4rem;"></i>
+          </div>
+          <h3 class="text-danger mb-3">Erreur de vérification</h3>
+          <div class="alert alert-danger">
+            {{ error }}
+          </div>
+          <p class="mb-4">
+            Le lien de vérification est peut-être expiré ou invalide.
+          </p>
+          <button class="btn btn-primary" (click)="goToLogin()">
+            Retour à la connexion
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

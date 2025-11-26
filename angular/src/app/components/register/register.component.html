@@ -1,0 +1,98 @@
+<div class="auth-wrapper">
+  <div class="auth-content">
+    <div class="card">
+      <div class="card-body text-center">
+        
+        <!-- Success Message -->
+        <div *ngIf="success" class="mb-4">
+          <div class="mb-4">
+            <i class="feather icon-check-circle text-success" style="font-size: 3rem;"></i>
+          </div>
+          <h3 class="text-success mb-3">Inscription réussie !</h3>
+          <div class="alert alert-success">
+            Un email de vérification a été envoyé à votre adresse.<br>
+            Vérifiez votre boîte mail pour activer votre compte.
+          </div>
+        </div>
+
+        <!-- Registration Form -->
+        <div *ngIf="!success">
+          <div class="mb-4">
+            <i class="feather icon-user-plus auth-icon"></i>
+          </div>
+          <h3 class="mb-4">Inscription</h3>
+          
+          <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="input-group mb-3">
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    placeholder="Prénom"
+                    formControlName="firstName"
+                    [class.is-invalid]="registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="input-group mb-3">
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    placeholder="Nom"
+                    formControlName="lastName"
+                    [class.is-invalid]="registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched">
+                </div>
+              </div>
+            </div>
+            
+            <div class="input-group mb-3">
+              <input 
+                type="text" 
+                class="form-control" 
+                placeholder="Nom d'utilisateur"
+                formControlName="username"
+                [class.is-invalid]="registerForm.get('username')?.invalid && registerForm.get('username')?.touched">
+            </div>
+            
+            <div class="input-group mb-3">
+              <input 
+                type="email" 
+                class="form-control" 
+                placeholder="Email"
+                formControlName="email"
+                [class.is-invalid]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">
+            </div>
+            
+            <div class="input-group mb-4">
+              <input 
+                type="password" 
+                class="form-control" 
+                placeholder="Mot de passe (min. 6 caractères)"
+                formControlName="password"
+                [class.is-invalid]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
+            </div>
+            
+            <div class="alert alert-danger" *ngIf="error">
+              {{ error }}
+            </div>
+            
+            <button 
+              class="btn btn-primary shadow-2 mb-4 w-100" 
+              type="submit"
+              [disabled]="loading || registerForm.invalid">
+              <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+              S'inscrire
+            </button>
+          </form>
+          
+          <p class="mb-0 text-muted">
+            Déjà un compte ? 
+            <a href="#" (click)="goToLogin()" class="text-primary">Se connecter</a>
+          </p>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,50 @@
+<div class="auth-wrapper">
+  <div class="auth-content">
+    <div class="card">
+      <div class="card-body text-center">
+        <div class="mb-4">
+          <i class="feather icon-unlock auth-icon"></i>
+        </div>
+        <h3 class="mb-4">Connexion</h3>
+        
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+          <div class="input-group mb-3">
+            <input 
+              type="text" 
+              class="form-control" 
+              placeholder="Nom d'utilisateur"
+              formControlName="username"
+              [class.is-invalid]="loginForm.get('username')?.invalid && loginForm.get('username')?.touched">
+          </div>
+          
+          <div class="input-group mb-4">
+            <input 
+              type="password" 
+              class="form-control" 
+              placeholder="Mot de passe"
+              formControlName="password"
+              [class.is-invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+          </div>
+          
+          <div class="alert alert-danger" *ngIf="error">
+            {{ error }}
+          </div>
+          
+          <button 
+            class="btn btn-primary shadow-2 mb-3 w-100" 
+            type="submit"
+            [disabled]="loading || loginForm.invalid">
+            <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+            Se connecter
+          </button>
+        </form>
+        
+
+        
+        <p class="mb-0 text-muted">
+          Pas de compte ? <a routerLink="/register" class="f-w-400">S'inscrire</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

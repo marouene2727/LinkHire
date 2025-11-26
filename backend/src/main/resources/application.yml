@@ -1,0 +1,77 @@
+spring:
+  application:
+    name: candidate-management-system
+  
+  # Configuration base de données MariaDB
+  datasource:
+    url: jdbc:mariadb://localhost:3306/candidate_management
+    driver-class-name: org.mariadb.jdbc.Driver
+    username: root
+    password: ${DB_PASSWORD:}
+  
+  # Configuration JPA/Hibernate
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+  
+
+  
+  # Configuration Mail
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          ssl:
+            trust: smtp.gmail.com
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+    test-connection: false
+  
+  # Configuration des fichiers uploadés
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+# Configuration serveur
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+# Configuration logging
+logging:
+  level:
+    '[com.recruitment.candidatemanagement]': DEBUG
+    '[org.springframework.mail]': DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+
+
+
+# Configuration application
+app:
+  file-storage:
+    upload-dir: ./uploads
+  email:
+    check-interval: 300000 # 5 minutes en millisecondes
+  ai:
+    scoring:
+      enabled: true
+      mock-mode: true # Pour les tests, utilise un scoring simulé
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration: 86400000 # 24 heures

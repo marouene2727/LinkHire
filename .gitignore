@@ -1,0 +1,73 @@
+# Backend (Spring Boot)
+backend/HELP.md
+backend/target/
+backend/.mvn/
+backend/mvnw
+backend/mvnw.cmd
+!backend/**/src/main/**/target/
+!backend/**/src/test/**/target/
+backend/build/
+!backend/**/src/main/**/build/
+!backend/**/src/test/**/build/
+
+# Frontend (Angular)
+angular/dist/
+angular/tmp/
+angular/out-tsc/
+angular/bazel-out/
+angular/node_modules/
+angular/chrome-profiler-events*.json
+angular/speed-measure-plugin*.json
+angular/.angular/
+angular/.sass-cache/
+angular/connect.lock
+angular/coverage/
+angular/libpeerconnection.log
+angular/npm-debug.log
+angular/yarn-error.log
+angular/testem.log
+angular/typings/
+angular/package-lock.json
+
+# IDEs and editors
+.idea/
+*.iws
+*.iml
+*.ipr
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache
+nbproject/private/
+nbbuild/
+nbdist/
+.nb-gradle/
+.c9/
+*.launch
+*.sublime-workspace
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Uploads et fichiers sensibles
+uploads/
+
+# Configuration sensible
+application-local.yml
+application-prod.yml
+.env
+
+angularBase

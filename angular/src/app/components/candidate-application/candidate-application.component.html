@@ -1,0 +1,173 @@
+<div class="candidate-application-container">
+  <div class="form-header">
+    <h2 *ngIf="jobOffer">Postuler pour : {{ jobOffer.title }}</h2>
+    <h2 *ngIf="!jobOffer">Postuler à cette offre</h2>
+    <p *ngIf="jobOffer" class="company-info">{{ jobOffer.company }} - {{ jobOffer.location }}</p>
+    <p>Remplissez le formulaire ci-dessous pour soumettre votre candidature</p>
+  </div>
+
+  <form [formGroup]="applicationForm" (ngSubmit)="onSubmit()" class="application-form">
+    <!-- Informations personnelles -->
+    <div class="form-section">
+      <h3>Informations personnelles</h3>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="firstName">Prénom *</label>
+          <input 
+            type="text" 
+            id="firstName" 
+            formControlName="firstName"
+            [class.error]="isFieldInvalid('firstName')"
+            placeholder="Votre prénom">
+          <div class="error-message" *ngIf="isFieldInvalid('firstName')">
+            {{ getFieldError('firstName') }}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="lastName">Nom *</label>
+          <input 
+            type="text" 
+            id="lastName" 
+            formControlName="lastName"
+            [class.error]="isFieldInvalid('lastName')"
+            placeholder="Votre nom">
+          <div class="error-message" *ngIf="isFieldInvalid('lastName')">
+            {{ getFieldError('lastName') }}
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="email">Email *</label>
+          <input 
+            type="email" 
+            id="email" 
+            formControlName="email"
+            [class.error]="isFieldInvalid('email')"
+            placeholder="votre.email@exemple.com">
+          <div class="error-message" *ngIf="isFieldInvalid('email')">
+            {{ getFieldError('email') }}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="phone">Téléphone *</label>
+          <input 
+            type="tel" 
+            id="phone" 
+            formControlName="phone"
+            [class.error]="isFieldInvalid('phone')"
+            placeholder="+33 6 12 34 56 78">
+          <div class="error-message" *ngIf="isFieldInvalid('phone')">
+            {{ getFieldError('phone') }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Liens professionnels -->
+    <div class="form-section">
+      <h3>Liens professionnels</h3>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="linkedinUrl">LinkedIn</label>
+          <input 
+            type="url" 
+            id="linkedinUrl" 
+            formControlName="linkedinUrl"
+            [class.error]="isFieldInvalid('linkedinUrl')"
+            placeholder="https://www.linkedin.com/in/votre-profil">
+          <div class="error-message" *ngIf="isFieldInvalid('linkedinUrl')">
+            {{ getFieldError('linkedinUrl') }}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="githubUrl">GitHub</label>
+          <input 
+            type="url" 
+            id="githubUrl" 
+            formControlName="githubUrl"
+            [class.error]="isFieldInvalid('githubUrl')"
+            placeholder="https://github.com/votre-username">
+          <div class="error-message" *ngIf="isFieldInvalid('githubUrl')">
+            {{ getFieldError('githubUrl') }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Documents -->
+    <div class="form-section">
+      <h3>Documents</h3>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="cv">CV (PDF ou Word)</label>
+          <input 
+            type="file" 
+            id="cv" 
+            accept=".pdf,.doc,.docx"
+            (change)="onFileSelect($event, 'cv')"
+            class="file-input">
+          <div class="file-info">Formats acceptés: PDF, DOC, DOCX (max 5MB)</div>
+        </div>
+
+        <div class="form-group">
+          <label for="coverLetter">Lettre de motivation (PDF ou Word)</label>
+          <input 
+            type="file" 
+            id="coverLetter" 
+            accept=".pdf,.doc,.docx"
+            (change)="onFileSelect($event, 'coverLetter')"
+            class="file-input">
+          <div class="file-info">Formats acceptés: PDF, DOC, DOCX (max 5MB)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Message -->
+    <div class="form-section">
+      <h3>Message pour le recruteur</h3>
+      
+      <div class="form-group">
+        <label for="message">Votre message *</label>
+        <textarea 
+          id="message" 
+          formControlName="message"
+          [class.error]="isFieldInvalid('message')"
+          rows="6"
+          placeholder="Présentez-vous et expliquez pourquoi vous êtes intéressé(e) par ce poste..."></textarea>
+        <div class="error-message" *ngIf="isFieldInvalid('message')">
+          {{ getFieldError('message') }}
+        </div>
+        <div class="char-count">
+          {{ applicationForm.get('message')?.value?.length || 0 }} caractères (minimum 50)
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="form-actions">
+      <button 
+        type="button" 
+        class="btn btn-secondary"
+        (click)="applicationForm.reset()">
+        Réinitialiser
+      </button>
+      
+      <button 
+        type="submit" 
+        class="btn btn-primary"
+        [disabled]="applicationForm.invalid || isSubmitting">
+        <i class="fas fa-paper-plane" *ngIf="!isSubmitting"></i>
+        <i class="fas fa-spinner fa-spin" *ngIf="isSubmitting"></i>
+        {{ isSubmitting ? 'Envoi en cours...' : 'Envoyer ma candidature' }}
+      </button>
+    </div>
+  </form>
+</div>

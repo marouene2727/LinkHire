@@ -86,6 +86,10 @@ const routes: Routes = [
         loadComponent: () => import('./components/applications/applications-list.component').then((c) => c.ApplicationsListComponent)
       },
       {
+        path: 'applications/archived',
+        loadComponent: () => import('./components/applications/applications-list.component').then((c) => c.ApplicationsListComponent)
+      },
+      {
         path: 'applications/:id',
         loadComponent: () => import('./components/applications/application-detail.component').then((c) => c.ApplicationDetailComponent)
       }

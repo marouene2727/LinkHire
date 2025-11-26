@@ -71,7 +71,7 @@ app:
   ai:
     scoring:
       enabled: true
-      mock-mode: true # Pour les tests, utilise un scoring simulé
+      mock-mode: false # Analyse IA réelle activée
   jwt:
     secret: ${JWT_SECRET}
     expiration: 86400000 # 24 heures

@@ -69,5 +69,5 @@ uploads/
 application-local.yml
 application-prod.yml
 .env
-
+help
 angularBase

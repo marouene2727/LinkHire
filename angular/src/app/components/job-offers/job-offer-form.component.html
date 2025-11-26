@@ -1,0 +1,635 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-lg-8">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">{{ isEdit ? 'Modifier' : 'Créer' }} une offre d'emploi</h5>
+        </div>
+        
+        <div class="card-body">
+          <form [formGroup]="jobForm" (ngSubmit)="onSubmit()">
+            
+            <!-- Accordéons -->
+            <div class="accordion" id="jobFormAccordion">
+              
+              <!-- Informations générales -->
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button" type="button" (click)="toggleAccordion('general')" 
+                          [class.collapsed]="!isAccordionOpen('general')">
+                    <i class="feather icon-info me-2"></i>Informations générales
+                  </button>
+                </h2>
+                <div class="accordion-collapse collapse" [class.show]="isAccordionOpen('general')">
+                  <div class="accordion-body">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <label class="form-label">Titre du poste *</label>
+                        <input type="text" class="form-control" formControlName="title" 
+                               placeholder="Ex: Développeur Full Stack">
+                      </div>
+                      
+                      <div class="col-md-6">
+                        <label class="form-label">Entreprise *</label>
+                        <input type="text" class="form-control" formControlName="company" 
+                               placeholder="Nom de l'entreprise">
+                      </div>
+                      
+
+                      
+                      <div class="col-12 mt-3">
+                        <div class="d-flex align-items-center mb-2">
+                          <label class="form-label mb-0 me-2">Description du poste *</label>
+                          <i class="feather me-2" [class.icon-eye]="previewVisibility.description" [class.icon-eye-off]="!previewVisibility.description" 
+                             (click)="togglePreviewVisibility('description')" style="cursor: pointer; color: #007bff;"></i>
+                          <button type="button" class="btn btn-outline-primary btn-sm" (click)="fillAutoDescription()">
+                            <i class="feather icon-zap me-1"></i>Remplir auto
+                          </button>
+                        </div>
+                        <textarea class="form-control" rows="4" formControlName="description" 
+                                  placeholder="Décrivez les missions, responsabilités..."></textarea>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Localisation et modalités -->
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button" type="button" (click)="toggleAccordion('location')" 
+                          [class.collapsed]="!isAccordionOpen('location')">
+                    <i class="feather icon-map-pin me-2"></i>Localisation et modalités
+                  </button>
+                </h2>
+                <div class="accordion-collapse collapse" [class.show]="isAccordionOpen('location')">
+                  <div class="accordion-body">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <label class="form-label">Localisation *</label>
+                        <input type="text" class="form-control" formControlName="location" 
+                               placeholder="Ex: Paris, Lyon, Remote">
+                      </div>
+                      
+                      <div class="col-md-3">
+                        <label class="form-label">Télétravail</label>
+                        <select class="form-select" formControlName="remoteWork">
+                          <option value="no">Non</option>
+                          <option value="yes">Oui</option>
+                          <option value="hybrid">Hybride</option>
+                        </select>
+                      </div>
+                      
+                      <div class="col-md-3" *ngIf="jobForm.get('remoteWork')?.value === 'hybrid'">
+                        <label class="form-label">Jours/semaine</label>
+                        <input type="number" class="form-control" formControlName="remoteDays" 
+                               placeholder="Ex: 2" min="1" max="4">
+                      </div>
+                      
+                      <div class="col-md-3">
+                        <label class="form-label">Type de contrat *</label>
+                        <select class="form-select" formControlName="contractType">
+                          <option value="">Sélectionner</option>
+                          <option value="CDI">CDI</option>
+                          <option value="CDD">CDD</option>
+                          <option value="FREELANCE">Freelance</option>
+                          <option value="STAGE">Stage</option>
+                          <option value="APPRENTISSAGE">Apprentissage</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Rémunération -->
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button" type="button" (click)="toggleAccordion('salary')" 
+                          [class.collapsed]="!isAccordionOpen('salary')">
+                    <i class="feather icon-dollar-sign me-2"></i>Rémunération
+                  </button>
+                </h2>
+                <div class="accordion-collapse collapse" [class.show]="isAccordionOpen('salary')">
+                  <div class="accordion-body">
+                    <div class="row">
+                      <div class="col-md-4">
+                        <div class="d-flex align-items-center mb-2">
+                          <label class="form-label mb-0 me-2">Salaire minimum (€)</label>
+                          <i class="feather" [class.icon-eye]="previewVisibility.salary" [class.icon-eye-off]="!previewVisibility.salary" 
+                             (click)="togglePreviewVisibility('salary')" style="cursor: pointer; color: #007bff;"></i>
+                        </div>
+                        <input type="number" class="form-control" formControlName="salaryMin" 
+                               placeholder="Ex: 35000">
+                      </div>
+                      
+                      <div class="col-md-4">
+                        <label class="form-label">Salaire maximum (€)</label>
+                        <input type="number" class="form-control" formControlName="salaryMax" 
+                               placeholder="Ex: 45000">
+                      </div>
+                      
+                      <div class="col-md-4">
+                        <label class="form-label">Devise</label>
+                        <select class="form-select" formControlName="salaryCurrency">
+                          <option value="EUR">EUR (€)</option>
+                          <option value="USD">USD ($)</option>
+                        </select>
+                      </div>
+                      
+                      <div class="col-12 mt-3">
+                        <div class="d-flex align-items-center mb-2">
+                          <label class="form-label mb-0 me-2">Avantages</label>
+                          <i class="feather" [class.icon-eye]="previewVisibility.benefits" [class.icon-eye-off]="!previewVisibility.benefits" 
+                             (click)="togglePreviewVisibility('benefits')" style="cursor: pointer; color: #007bff;"></i>
+                        </div>
+                        <textarea class="form-control" rows="2" formControlName="benefits" 
+                                  placeholder="Ex: Tickets restaurant, mutuelle, télétravail..."></textarea>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Profil recherché -->
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button" type="button" (click)="toggleAccordion('profile')" 
+                          [class.collapsed]="!isAccordionOpen('profile')">
+                    <i class="feather icon-user me-2"></i>Profil recherché
+                  </button>
+                </h2>
+                <div class="accordion-collapse collapse" [class.show]="isAccordionOpen('profile')">
+                  <div class="accordion-body">
+                    <div class="row">
+                      <div class="col-md-4">
+                        <div class="d-flex align-items-center mb-2">
+                          <label class="form-label mb-0 me-2">Expérience minimum (années)</label>
+                          <i class="feather" [class.icon-eye]="previewVisibility.experience" [class.icon-eye-off]="!previewVisibility.experience" 
+                             (click)="togglePreviewVisibility('experience')" style="cursor: pointer; color: #007bff;"></i>
+                        </div>
+                        <input type="number" class="form-control" formControlName="experienceMin" 
+                               placeholder="Ex: 2">
+                      </div>
+                      
+                      <div class="col-md-4">
+                        <label class="form-label">Expérience maximum (années)</label>
+                        <input type="number" class="form-control" formControlName="experienceMax" 
+                               placeholder="Ex: 5">
+                      </div>
+                      
+                      <div class="col-md-4">
+                        <label class="form-label">Niveau d'études</label>
+                        <select class="form-select" formControlName="educationLevel">
+                          <option value="">Non spécifié</option>
+                          <option value="BAC">Bac</option>
+                          <option value="BAC_PLUS_2">Bac +2</option>
+                          <option value="BAC_PLUS_3">Bac +3</option>
+                          <option value="BAC_PLUS_5">Bac +5</option>
+                          <option value="DOCTORAT">Doctorat</option>
+                          <option value="AUTRE">Autre</option>
+                        </select>
+                      </div>
+                      
+                      <!-- Ligne 1: Compétences -->
+                      <div class="col-md-6 mt-3">
+                        <div class="d-flex align-items-center mb-2">
+                          <label class="form-label mb-0 me-2">Compétences requises *</label>
+                          <i class="feather" [class.icon-eye]="previewVisibility.skills" [class.icon-eye-off]="!previewVisibility.skills" 
+                             (click)="togglePreviewVisibility('skills')" style="cursor: pointer; color: #007bff;"></i>
+                        </div>
+                        
+                        <!-- Barre de recherche -->
+                        <input type="text" 
+                               class="form-control mb-2" 
+                               [(ngModel)]="skillSearchTerm"
+                               [ngModelOptions]="{standalone: true}"
+                               placeholder="Rechercher une compétence...">
+                        
+                        <div class="skills-checkbox-container">
+                          <!-- Option pour ajouter une nouvelle compétence -->
+                          <div class="skill-checkbox-item add-new-skill" *ngIf="canAddNewSkill" (click)="addNewSkill()">
+                            <i class="feather icon-plus me-2"></i>
+                            <span>Ajouter "{{ skillSearchTerm }}"</span>
+                          </div>
+                          
+                          <!-- Compétences existantes -->
+                          <div class="skill-checkbox-item" *ngFor="let skill of filteredSkills">
+                            <input type="checkbox" 
+                                   class="form-check-input" 
+                                   [id]="'skill-' + skill"
+                                   [checked]="isSkillSelected(skill)"
+                                   (change)="onSkillToggle(skill, $event)">
+                            <label class="form-check-label" [for]="'skill-' + skill">
+                              {{ skill }}
+                            </label>
+                          </div>
+                        </div>
+                        
+                        <input type="hidden" formControlName="requiredSkills">
+                      </div>
+                      
+                      <div class="col-md-6 mt-3">
+                        <label class="form-label">Compétences sélectionnées</label>
+                        <!-- Compétences sélectionnées -->
+                        <div class="selected-skills" *ngIf="selectedSkills.length > 0">
+                          <span class="skill-badge" *ngFor="let skill of selectedSkills">
+                            {{ skill }}
+                            <i class="feather icon-x" (click)="removeSkill(skill)"></i>
+                          </span>
+                        </div>
+                        <div *ngIf="selectedSkills.length === 0" class="text-muted">
+                          Aucune compétence sélectionnée
+                        </div>
+                      </div>
+                      
+                      <!-- Ligne 2: Langues -->
+                      <div class="col-md-6 mt-3">
+                        <div class="d-flex align-items-center mb-2">
+                          <label class="form-label mb-0 me-2">Langues</label>
+                          <i class="feather" [class.icon-eye]="previewVisibility.languages" [class.icon-eye-off]="!previewVisibility.languages" 
+                             (click)="togglePreviewVisibility('languages')" style="cursor: pointer; color: #007bff;"></i>
+                        </div>
+                        
+                        <!-- Barre de recherche langues -->
+                        <input type="text" 
+                               class="form-control mb-2" 
+                               [(ngModel)]="languageSearchTerm"
+                               [ngModelOptions]="{standalone: true}"
+                               placeholder="Rechercher une langue...">
+                        
+                        <div class="skills-checkbox-container">
+                          <!-- Option pour ajouter une nouvelle langue -->
+                          <div class="skill-checkbox-item add-new-skill" *ngIf="canAddNewLanguage" (click)="addNewLanguage()">
+                            <i class="feather icon-plus me-2"></i>
+                            <span>Ajouter "{{ languageSearchTerm }}"</span>
+                          </div>
+                          
+                          <!-- Langues existantes -->
+                          <div class="language-item" *ngFor="let language of filteredLanguages">
+                            <span class="language-name">{{ language }}</span>
+                            <select class="form-select form-select-sm" 
+                                    [value]="getSelectedLanguageLevel(language)"
+                                    (change)="onLanguageSelect(language, $event)">
+                              <option value="0">Niveau</option>
+                              <option *ngFor="let level of languageLevels" [value]="level.value">
+                                {{ level.label }}
+                              </option>
+                            </select>
+                          </div>
+                        </div>
+                        
+                        <input type="hidden" formControlName="languages">
+                      </div>
+                      
+                      <div class="col-md-6 mt-3">
+                        <label class="form-label">Langues sélectionnées</label>
+                        <!-- Langues sélectionnées -->
+                        <div class="selected-skills" *ngIf="selectedLanguages.length > 0">
+                          <span class="language-badge" *ngFor="let lang of selectedLanguages">
+                            {{ lang.language }} - {{ getLanguageLevelLabel(lang.level) }}
+                            <select class="ms-2 border-0 bg-transparent text-white" 
+                                    [value]="lang.type"
+                                    (change)="onLanguageTypeChange(lang.language, $event)">
+                              <option *ngFor="let type of languageTypes" [value]="type.value">
+                                {{ type.label }}
+                              </option>
+                            </select>
+                            <i class="feather icon-x ms-2" (click)="removeLanguage(lang.language)"></i>
+                          </span>
+                        </div>
+                        <div *ngIf="selectedLanguages.length === 0" class="text-muted">
+                          Aucune langue sélectionnée
+                        </div>
+                      </div>
+                      
+                      <!-- Ligne 3: Certifications -->
+                      <div class="col-md-6 mt-3">
+                        <div class="d-flex align-items-center mb-2">
+                          <label class="form-label mb-0 me-2">Certifications</label>
+                          <i class="feather" [class.icon-eye]="previewVisibility.certifications" [class.icon-eye-off]="!previewVisibility.certifications" 
+                             (click)="togglePreviewVisibility('certifications')" style="cursor: pointer; color: #007bff;"></i>
+                        </div>
+                        
+                        <!-- Barre de recherche certifications -->
+                        <input type="text" 
+                               class="form-control mb-2" 
+                               [(ngModel)]="certificationSearchTerm"
+                               [ngModelOptions]="{standalone: true}"
+                               placeholder="Ajouter une certification...">
+                        
+                        <div class="skills-checkbox-container">
+                          <!-- Option pour ajouter une nouvelle certification -->
+                          <div class="skill-checkbox-item add-new-skill" *ngIf="canAddNewCertification" (click)="addNewCertification()">
+                            <i class="feather icon-plus me-2"></i>
+                            <span>Ajouter "{{ certificationSearchTerm }}"</span>
+                          </div>
+                          
+                          <div *ngIf="!canAddNewCertification" class="text-muted p-3">
+                            Tapez le nom d'une certification pour l'ajouter
+                          </div>
+                        </div>
+                        
+
+                      </div>
+                      
+                      <div class="col-md-6 mt-3">
+                        <label class="form-label">Certifications ajoutées</label>
+                        <!-- Certifications sélectionnées -->
+                        <div class="selected-skills" *ngIf="selectedCertifications.length > 0">
+                          <span class="certification-badge" *ngFor="let cert of selectedCertifications">
+                            {{ cert }}
+                            <i class="feather icon-x" (click)="removeCertification(cert)"></i>
+                          </span>
+                        </div>
+                        <div *ngIf="selectedCertifications.length === 0" class="text-muted">
+                          Aucune certification ajoutée
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Dates et contact -->
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button" type="button" (click)="toggleAccordion('contact')" 
+                          [class.collapsed]="!isAccordionOpen('contact')">
+                    <i class="feather icon-calendar me-2"></i>Dates et contact
+                  </button>
+                </h2>
+                <div class="accordion-collapse collapse" [class.show]="isAccordionOpen('contact')">
+                  <div class="accordion-body">
+                    <div class="row">
+                      <div class="col-md-3">
+                        <label class="form-label">Date limite de candidature</label>
+                        <input type="date" class="form-control" formControlName="applicationDeadline">
+                      </div>
+                      
+                      <div class="col-md-3">
+                        <label class="form-label">Date d'expiration de l'offre</label>
+                        <input type="date" class="form-control" formControlName="expiresAt">
+                      </div>
+                      
+                      <div class="col-md-3">
+                        <label class="form-label">Date de prise de poste</label>
+                        <input type="date" class="form-control" formControlName="startDate">
+                      </div>
+                      
+                      <div class="col-md-3">
+                        <label class="form-label">Email de contact</label>
+                        <input type="email" class="form-control" formControlName="contactEmail" 
+                               placeholder="recrutement@entreprise.com">
+                      </div>
+                      
+                      <div class="col-md-6 mt-3">
+                        <label class="form-label">Téléphone de contact</label>
+                        <input type="tel" class="form-control" formControlName="contactPhone" 
+                               placeholder="01 23 45 67 89">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="row mt-4">
+              <div class="col-12">
+                <div class="d-flex gap-2 flex-wrap">
+                  <button type="submit" class="btn btn-primary" [disabled]="loading || jobForm.invalid">
+                    <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+                    <i class="feather icon-save me-2"></i>
+                    {{ isEdit ? 'Modifier' : 'Créer' }}
+                  </button>
+                  
+                  <button type="button" class="btn btn-success" 
+                          *ngIf="!isEdit" 
+                          (click)="onSubmitAndPublish()" 
+                          [disabled]="loading || jobForm.invalid">
+                    <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+                    <i class="feather icon-upload me-2"></i>
+                    Créer et publier
+                  </button>
+                  
+                  <!-- Publier (seulement en mode édition et si DRAFT) -->
+                  <button type="button" class="btn btn-outline-success" 
+                          *ngIf="isEdit && currentJobOffer?.status === 'DRAFT'" 
+                          (click)="publishCurrentOffer()" 
+                          [disabled]="loading">
+                    <i class="feather icon-upload me-2"></i>
+                    Publier
+                  </button>
+                  
+                  <!-- Clôturer (si DRAFT ou PUBLISHED) -->
+                  <button type="button" class="btn btn-outline-danger" 
+                          *ngIf="isEdit && (currentJobOffer?.status === 'DRAFT' || currentJobOffer?.status === 'PUBLISHED')" 
+                          (click)="closeCurrentOffer()" 
+                          [disabled]="loading">
+                    <i class="feather icon-x-circle me-2"></i>
+                    Clôturer
+                  </button>
+                  
+                  <button type="button" class="btn btn-secondary" (click)="goBack()">
+                    <i class="feather icon-arrow-left me-2"></i>
+                    Retour
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div *ngIf="error" class="alert alert-danger mt-3">
+              {{ error }}
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Aperçu du poste -->
+    <div class="col-lg-4">
+      <div class="card sticky-top job-preview-card">
+        <div class="card-header bg-primary text-white">
+          <h6 class="mb-0"><i class="feather icon-eye me-2"></i>Aperçu du poste</h6>
+        </div>
+        <div class="card-body p-0">
+          
+          <!-- En-tête du poste -->
+          <div class="job-header p-4 bg-light border-bottom">
+            <div class="d-flex justify-content-between align-items-start">
+              <div class="job-info">
+                <div class="company-logo mb-3">
+                  <img src="assets/images/images perso/office-building.png" 
+                       alt="Logo entreprise" 
+                       class="company-logo-img">
+                </div>
+                <h4 class="job-title mb-2">{{ jobForm.get('title')?.value || 'Titre du poste' }}</h4>
+                <p class="company-name text-primary mb-0">{{ jobForm.get('company')?.value || 'Nom de l\'entreprise' }}</p>
+              </div>
+              
+              <div class="job-meta text-end">
+                <div *ngIf="jobForm.get('applicationDeadline')?.value" class="deadline mb-2">
+                  <small class="text-danger fw-bold">
+                    <i class="feather icon-clock me-1"></i>
+                    Candidature avant le {{ jobForm.get('applicationDeadline')?.value | date:'dd/MM/yyyy' }}
+                  </small>
+                </div>
+                
+                <div *ngIf="jobForm.get('startDate')?.value" class="start-date mb-2">
+                  <small class="text-muted">
+                    <i class="feather icon-calendar me-1"></i>
+                    Début: {{ jobForm.get('startDate')?.value | date:'dd/MM/yyyy' }}
+                  </small>
+                </div>
+                
+                <div *ngIf="jobForm.get('contactEmail')?.value" class="contact-email mb-1">
+                  <small class="text-muted">
+                    <i class="feather icon-mail me-1"></i>
+                    {{ jobForm.get('contactEmail')?.value }}
+                  </small>
+                </div>
+                
+                <div *ngIf="jobForm.get('contactPhone')?.value" class="contact-phone">
+                  <small class="text-muted">
+                    <i class="feather icon-phone me-1"></i>
+                    {{ jobForm.get('contactPhone')?.value }}
+                  </small>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Informations clés -->
+          <div class="job-details p-4">
+            <div class="detail-item" *ngIf="jobForm.get('location')?.value">
+              <div class="detail-icon">
+                <i class="feather icon-map-pin"></i>
+              </div>
+              <div class="detail-content">
+                <span class="detail-label">Localisation</span>
+                <div class="detail-value">
+                  {{ jobForm.get('location')?.value }}
+                  <span *ngIf="isRemoteWorkVisible()" class="badge bg-success ms-2">{{ getRemoteWorkLabel() }}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="detail-item" *ngIf="jobForm.get('contractType')?.value">
+              <div class="detail-icon">
+                <i class="feather icon-briefcase"></i>
+              </div>
+              <div class="detail-content">
+                <span class="detail-label">Type de contrat</span>
+                <div class="detail-value">{{ getContractTypeLabel(jobForm.get('contractType')?.value) }}</div>
+              </div>
+            </div>
+            
+            <div class="detail-item" *ngIf="(jobForm.get('salaryMin')?.value || jobForm.get('salaryMax')?.value) && previewVisibility.salary">
+              <div class="detail-icon">
+                <i class="feather icon-dollar-sign"></i>
+              </div>
+              <div class="detail-content">
+                <span class="detail-label">Rémunération</span>
+                <div class="detail-value salary-range">
+                  <span *ngIf="jobForm.get('salaryMin')?.value && jobForm.get('salaryMax')?.value">
+                    {{ jobForm.get('salaryMin')?.value | number:'1.0-0' }}{{ jobForm.get('salaryCurrency')?.value === 'USD' ? '$' : '€' }} - {{ jobForm.get('salaryMax')?.value | number:'1.0-0' }}{{ jobForm.get('salaryCurrency')?.value === 'USD' ? '$' : '€' }}
+                  </span>
+                  <span *ngIf="jobForm.get('salaryMin')?.value && !jobForm.get('salaryMax')?.value">
+                    À partir de {{ jobForm.get('salaryMin')?.value | number:'1.0-0' }}{{ jobForm.get('salaryCurrency')?.value === 'USD' ? '$' : '€' }}
+                  </span>
+                  <span *ngIf="!jobForm.get('salaryMin')?.value && jobForm.get('salaryMax')?.value">
+                    Jusqu'à {{ jobForm.get('salaryMax')?.value | number:'1.0-0' }}{{ jobForm.get('salaryCurrency')?.value === 'USD' ? '$' : '€' }}
+                  </span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="detail-item" *ngIf="(jobForm.get('experienceMin')?.value || jobForm.get('experienceMax')?.value) && previewVisibility.experience">
+              <div class="detail-icon">
+                <i class="feather icon-award"></i>
+              </div>
+              <div class="detail-content">
+                <span class="detail-label">Expérience</span>
+                <div class="detail-value">
+                  <span *ngIf="jobForm.get('experienceMin')?.value && jobForm.get('experienceMax')?.value">
+                    {{ jobForm.get('experienceMin')?.value }} - {{ jobForm.get('experienceMax')?.value }} ans
+                  </span>
+                  <span *ngIf="jobForm.get('experienceMin')?.value && !jobForm.get('experienceMax')?.value">
+                    Minimum {{ jobForm.get('experienceMin')?.value }} ans
+                  </span>
+                  <span *ngIf="!jobForm.get('experienceMin')?.value && jobForm.get('experienceMax')?.value">
+                    Maximum {{ jobForm.get('experienceMax')?.value }} ans
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Description -->
+          <div class="job-section" *ngIf="jobForm.get('description')?.value && previewVisibility.description">
+            <div class="section-header">
+              <h6 class="section-title">Description du poste</h6>
+            </div>
+            <div class="section-content">
+              <p class="description-text" style="white-space: pre-line;">{{ jobForm.get('description')?.value }}</p>
+            </div>
+          </div>
+          
+          <!-- Compétences -->
+          <div class="job-section" *ngIf="jobForm.get('requiredSkills')?.value && previewVisibility.skills">
+            <div class="section-header">
+              <h6 class="section-title">Compétences requises</h6>
+            </div>
+            <div class="section-content">
+              <div class="skills-tags">
+                <span class="skill-tag" *ngFor="let skill of selectedSkills">
+                  {{ skill }}
+                </span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Langues -->
+          <div class="job-section" *ngIf="selectedLanguages.length > 0 && previewVisibility.languages">
+            <div class="section-header">
+              <h6 class="section-title">Langues</h6>
+            </div>
+            <div class="section-content">
+              <div class="skills-tags">
+                <span class="skill-tag" *ngFor="let lang of selectedLanguages">
+                  {{ lang.language }} ({{ getLanguageLevelLabel(lang.level) }})
+                </span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Certifications -->
+          <div class="job-section" *ngIf="selectedCertifications.length > 0 && previewVisibility.certifications">
+            <div class="section-header">
+              <h6 class="section-title">Certifications</h6>
+            </div>
+            <div class="section-content">
+              <div class="skills-tags">
+                <span class="skill-tag" *ngFor="let cert of selectedCertifications">
+                  {{ cert }}
+                </span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Avantages -->
+          <div class="job-section" *ngIf="jobForm.get('benefits')?.value && previewVisibility.benefits">
+            <div class="section-header">
+              <h6 class="section-title">Avantages</h6>
+            </div>
+            <div class="section-content">
+              <p class="benefits-text">{{ jobForm.get('benefits')?.value }}</p>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

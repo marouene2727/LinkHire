@@ -1,0 +1,539 @@
+<div class="container-fluid" *ngIf="jobOffer">
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <div>
+            <h4 class="mb-1">{{ jobOffer.title }}</h4>
+            <p class="text-muted mb-0">{{ jobOffer.company }} • {{ jobOffer.location }}</p>
+          </div>
+          <div class="d-flex gap-2 flex-wrap">
+            <span class="badge" [ngClass]="getStatusClass(jobOffer.status)">
+              {{ getStatusLabel(jobOffer.status) }}
+            </span>
+            
+            <!-- Modifier (seulement si DRAFT) -->
+            <button class="btn btn-outline-primary btn-sm" 
+                    *ngIf="jobOffer.status === 'DRAFT'" 
+                    [routerLink]="['/job-offers', jobOffer.id, 'edit']">
+              <i class="feather icon-edit me-1"></i>Modifier
+            </button>
+            
+            <!-- Publier (seulement si DRAFT) -->
+            <button class="btn btn-outline-success btn-sm" 
+                    *ngIf="jobOffer.status === 'DRAFT'" 
+                    (click)="publishOffer()">
+              <i class="feather icon-upload me-1"></i>Publier
+            </button>
+            
+            <!-- Clôturer (si DRAFT ou PUBLISHED) -->
+            <button class="btn btn-outline-danger btn-sm" 
+                    *ngIf="jobOffer.status === 'DRAFT' || jobOffer.status === 'PUBLISHED'" 
+                    (click)="closeOffer()">
+              <i class="feather icon-x-circle me-1"></i>Clôturer
+            </button>
+            
+            <button class="btn btn-outline-secondary btn-sm" routerLink="/job-offers">
+              <i class="feather icon-arrow-left me-1"></i>Retour
+            </button>
+          </div>
+        </div>
+        
+        <div class="card-body">
+          <div class="row">
+            <!-- Colonne principale -->
+            <div class="col-lg-8">
+              
+              <!-- Description du poste -->
+              <div class="mb-4">
+                <h6 class="text-primary mb-3">Description du poste</h6>
+                <p class="text-justify">{{ jobOffer.description }}</p>
+              </div>
+              
+              <!-- Compétences requises -->
+              <div class="mb-4" *ngIf="jobOffer.requiredSkills">
+                <h6 class="text-primary mb-3">Compétences requises</h6>
+                <p>{{ jobOffer.requiredSkills }}</p>
+              </div>
+              
+              <!-- Compétences souhaitées -->
+              <div class="mb-4" *ngIf="jobOffer.preferredSkills">
+                <h6 class="text-primary mb-3">Compétences souhaitées</h6>
+                <p>{{ jobOffer.preferredSkills }}</p>
+              </div>
+              
+             
+              
+              <!-- Avantages -->
+              <div class="mb-4" *ngIf="jobOffer.benefits">
+                <h6 class="text-primary mb-3">Avantages</h6>
+                <p>{{ jobOffer.benefits }}</p>
+              </div>
+              
+              <!-- Candidats validés -->
+              <div class="mb-4" *ngIf="validatedCandidates.length > 0">
+                <h6 class="text-primary mb-3">Candidats retenus ({{ validatedCandidates.length }})</h6>
+                <div class="table-responsive">
+                  <table class="table table-sm table-bordered">
+                    <thead class="table-light">
+                      <tr>
+                        <th>Nom</th>
+                        <th>Email</th>
+                        <th>Téléphone</th>
+                        <th>Note IA</th>
+                        <th>Validé le</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let candidate of validatedCandidates">
+                        <td><strong>{{ candidate.firstName }} {{ candidate.lastName }}</strong></td>
+                        <td>{{ candidate.email }}</td>
+                        <td>{{ candidate.phone || '-' }}</td>
+                        <td>
+                          <span *ngIf="candidate.aiScore" class="badge" [ngClass]="getScoreClass(candidate.aiScore)">
+                            {{ candidate.aiScore }}/20
+                          </span>
+                          <span *ngIf="!candidate.aiScore" class="text-muted">-</span>
+                        </td>
+                        <td>{{ formatDate(candidate.validatedAt) }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+              <div class="card bg-light">
+                <div class="card-body">
+                  
+                  <!-- Informations clés -->
+                  <h6 class="text-primary mb-3">Informations clés</h6>
+                  
+                  <div class="mb-3">
+                    <strong>Type de contrat:</strong><br>
+                    <span class="badge bg-secondary">{{ getContractTypeLabel(jobOffer.contractType) }}</span>
+                  </div>
+                  
+                  <div class="mb-3" *ngIf="jobOffer.salaryMin || jobOffer.salaryMax">
+                    <strong>Rémunération:</strong><br>
+                    <span *ngIf="jobOffer.salaryMin && jobOffer.salaryMax">
+                      {{ jobOffer.salaryMin }}€ - {{ jobOffer.salaryMax }}€
+                    </span>
+                    <span *ngIf="jobOffer.salaryMin && !jobOffer.salaryMax">
+                      À partir de {{ jobOffer.salaryMin }}€
+                    </span>
+                    <span *ngIf="!jobOffer.salaryMin && jobOffer.salaryMax">
+                      Jusqu'à {{ jobOffer.salaryMax }}€
+                    </span>
+                  </div>
+                  
+                  <div class="mb-3" *ngIf="jobOffer.experienceMin || jobOffer.experienceMax">
+                    <strong>Expérience:</strong><br>
+                    <span *ngIf="jobOffer.experienceMin && jobOffer.experienceMax">
+                      {{ jobOffer.experienceMin }} - {{ jobOffer.experienceMax }} ans
+                    </span>
+                    <span *ngIf="jobOffer.experienceMin && !jobOffer.experienceMax">
+                      Minimum {{ jobOffer.experienceMin }} ans
+                    </span>
+                    <span *ngIf="!jobOffer.experienceMin && jobOffer.experienceMax">
+                      Maximum {{ jobOffer.experienceMax }} ans
+                    </span>
+                  </div>
+                  
+                  <div class="mb-3" *ngIf="jobOffer.educationLevel">
+                    <strong>Niveau d'études:</strong><br>
+                    {{ getEducationLabel(jobOffer.educationLevel) }}
+                  </div>
+                  
+                  <div class="mb-3" *ngIf="jobOffer.remoteWork">
+                    <strong>Télétravail:</strong><br>
+                    <span class="badge bg-success">Possible</span>
+                  </div>
+                  
+                  <div class="mb-3" *ngIf="jobOffer.languages">
+                    <strong>Langues:</strong><br>
+                    {{ jobOffer.languages }}
+                  </div>
+                  
+                  <!-- Dates importantes -->
+                  <h6 class="text-primary mb-3 mt-4">Dates importantes</h6>
+                  
+                  <div class="mb-3" *ngIf="jobOffer.applicationDeadline">
+                    <strong>Date limite:</strong><br>
+                    {{ formatDate(jobOffer.applicationDeadline) }}
+                  </div>
+                  
+                  <div class="mb-3" *ngIf="jobOffer.startDate">
+                    <strong>Prise de poste:</strong><br>
+                    {{ formatDate(jobOffer.startDate) }}
+                  </div>
+                  
+                  <div class="mb-3">
+                    <strong>Publié le:</strong><br>
+                    {{ formatDate(jobOffer.createdAt) }}
+                  </div>
+                  
+                  <!-- Contact -->
+                  <h6 class="text-primary mb-3 mt-4">Contact</h6>
+                  
+                  <div class="mb-2" *ngIf="jobOffer.contactEmail">
+                    <strong>Email:</strong><br>
+                    <a [href]="'mailto:' + jobOffer.contactEmail">{{ jobOffer.contactEmail }}</a>
+                  </div>
+                  
+                  <div class="mb-3" *ngIf="jobOffer.contactPhone">
+                    <strong>Téléphone:</strong><br>
+                    <a [href]="'tel:' + jobOffer.contactPhone">{{ jobOffer.contactPhone }}</a>
+                  </div>
+                  
+                  <!-- Lien de candidature (seulement si PUBLISHED) -->
+                  <div class="mt-4" *ngIf="jobOffer.status === 'PUBLISHED'">
+                    <button class="btn btn-primary w-100" (click)="copyApplicationLink()">
+                      <i class="feather icon-link me-2"></i>Copier le lien de candidature
+                    </button>
+                    <small class="text-muted mt-2 d-block">
+                      Partagez ce lien pour que les candidats puissent postuler
+                    </small>
+                  </div>
+                  
+                  <!-- Message si pas encore publié -->
+                  <div class="mt-4" *ngIf="jobOffer.status === 'DRAFT'">
+                    <div class="alert alert-info">
+                      <i class="feather icon-info me-2"></i>
+                      <strong>Offre en brouillon</strong><br>
+                      <small>Publiez l'offre pour générer le lien de candidature</small>
+                    </div>
+                  </div>
+                  
+                  <!-- Message si clôturée -->
+                  <div class="mt-4" *ngIf="jobOffer.status === 'CLOSED'">
+                    <div class="alert alert-warning">
+                      <i class="feather icon-x-circle me-2"></i>
+                      <strong>Offre clôturée</strong><br>
+                      <small>Cette offre n'accepte plus de candidatures</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Tableau des candidatures -->
+      <div class="card mt-4" *ngIf="jobOffer.status === 'PUBLISHED' || jobOffer.status === 'CLOSED'">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <div class="d-flex align-items-center">
+            <h5 class="mb-0 me-3">
+              <i class="feather icon-users me-2"></i>
+              Candidatures ({{ applications.length }})
+            </h5>
+            <button class="btn btn-outline-secondary btn-sm" (click)="refreshApplications()" title="Actualiser">
+              <i class="feather icon-refresh-cw"></i>
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+          <!-- Filtres -->
+          <div class="row mb-3" *ngIf="applications.length > 0">
+            <div class="col-md-3">
+              <select class="form-select form-select-sm" [(ngModel)]="selectedStatus" (change)="filterApplications()">
+                <option value="">Tous les statuts</option>
+                <option value="PENDING">En attente</option>
+                <option value="VALIDATED">Validé</option>
+                <option value="AMBIGUOUS">À examiner</option>
+                <option value="REJECTED">Rejeté</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <select class="form-select form-select-sm" [(ngModel)]="selectedViewed" (change)="filterApplications()">
+                <option value="">Toutes les candidatures</option>
+                <option value="true">Consultées</option>
+                <option value="false">Non consultées</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="showArchived" [(ngModel)]="showArchived" (change)="toggleArchivedView()">
+                <label class="form-check-label" for="showArchived">
+                  Voir les archivées
+                </label>
+              </div>
+            </div>
+            <div class="col-md-3 text-end">
+              <button class="btn btn-success btn-sm me-2" 
+                      [disabled]="selectedApplications.length === 0 || !allSelectedAreViewed()"
+                      (click)="openBulkValidateModal()"
+                      title="Valider les candidatures sélectionnées">
+                <i class="feather icon-check me-1"></i>Valider sélection ({{ selectedApplications.length }})
+              </button>
+              <button class="btn btn-danger btn-sm" 
+                      [disabled]="selectedApplications.length === 0 || !allSelectedAreViewed()"
+                      (click)="openBulkRejectModal()"
+                      title="Rejeter les candidatures sélectionnées">
+                <i class="feather icon-x me-1"></i>Rejeter sélection ({{ selectedApplications.length }})
+              </button>
+            </div>
+          </div>
+          
+          <div *ngIf="filteredApplications.length === 0 && applications.length > 0" class="text-center py-4">
+            <p class="text-muted">Aucune candidature ne correspond aux filtres sélectionnés.</p>
+          </div>
+          
+          <div *ngIf="applications.length === 0" class="text-center py-4">
+            <p class="text-muted">Aucune candidature pour le moment</p>
+          </div>
+          
+          <div class="table-responsive" *ngIf="filteredApplications.length > 0">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>
+                    <input type="checkbox" 
+                           [checked]="isAllSelected()" 
+                           [indeterminate]="isSomeSelected()"
+                           (change)="toggleAllSelection()">
+                  </th>
+                  <th>Vue</th>
+                  <th>Candidat</th>
+                  <th>Email</th>
+                  <th>Téléphone</th>
+                  <th>Reçu le</th>
+                  <th>Note IA</th>
+                  <th>Statut</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let app of filteredApplications">
+                  <td class="text-center">
+                    <input type="checkbox" 
+                           [checked]="isSelected(app.id)" 
+                           (change)="toggleSelection(app.id)">
+                  </td>
+                  <td class="text-center">
+                    <i class="feather icon-eye text-success" 
+                       *ngIf="app.viewedByRecruiter" 
+                       [title]="'Candidature consultée le ' + (app.viewedAt ? formatDate(app.viewedAt) : 'date inconnue')"
+                       data-bs-toggle="tooltip"></i>
+                    <i class="feather icon-eye-off text-muted" 
+                       *ngIf="!app.viewedByRecruiter" 
+                       title="Candidature non consultée"
+                       data-bs-toggle="tooltip"></i>
+                  </td>
+                  <td>{{ app.candidate.firstName }} {{ app.candidate.lastName }}</td>
+                  <td>{{ app.candidate.email }}</td>
+                  <td>{{ app.candidate.phone || '-' }}</td>
+                  <td>{{ formatDate(app.receivedAt) }}</td>
+                  <td>
+                    <span *ngIf="app.aiScore" 
+                          class="badge" 
+                          [ngClass]="getScoreClass(app.aiScore)"
+                          [title]="getScoreBreakdown(app.aiScore)"
+                          data-bs-toggle="tooltip"
+                          style="cursor: help; white-space: pre-line;">
+                      {{ app.aiScore }}/20
+                    </span>
+                    <span *ngIf="!app.aiScore" class="text-muted">-</span>
+                  </td>
+                  <td>
+                    <span class="badge bg-warning" 
+                          *ngIf="app.status === 'PENDING'"
+                          title="Candidature en cours d'analyse par l'IA"
+                          data-bs-toggle="tooltip"
+                          style="cursor: help;">En attente</span>
+                    <span class="badge bg-success" 
+                          *ngIf="app.status === 'VALIDATED'"
+                          [title]="app.aiAnalysis || 'Candidat validé par l\'IA'"
+                          data-bs-toggle="tooltip"
+                          style="cursor: help;">Validé</span>
+                    <span class="badge bg-info" 
+                          *ngIf="app.status === 'AMBIGUOUS'"
+                          [title]="app.aiAnalysis || 'Candidat à examiner manuellement'"
+                          data-bs-toggle="tooltip"
+                          style="cursor: help;">À examiner</span>
+                    <span class="badge bg-danger" 
+                          *ngIf="app.status === 'REJECTED'"
+                          [title]="app.aiAnalysis || 'Candidat rejeté par l\'IA'"
+                          data-bs-toggle="tooltip"
+                          style="cursor: help;">Rejeté</span>
+                  </td>
+                  <td>
+                    <div class="btn-group btn-group-sm">
+                      <button class="btn btn-outline-primary btn-sm" 
+                              [routerLink]="['/applications', app.id]" title="Consulter">
+                        <i class="feather icon-eye"></i>
+                      </button>
+                      <button class="btn btn-outline-success btn-sm" 
+                              [disabled]="!app.viewedByRecruiter"
+                              (click)="openQuickValidateModal(app.id, app.candidate.firstName)" 
+                              [title]="app.viewedByRecruiter ? 'Valider et envoyer email' : 'Consultez d\'abord la candidature'">
+                        <i class="feather icon-check"></i>
+                      </button>
+                      <button class="btn btn-outline-danger btn-sm" 
+                              [disabled]="!app.viewedByRecruiter"
+                              (click)="openQuickRejectModal(app.id, app.candidate.firstName)" 
+                              [title]="app.viewedByRecruiter ? 'Rejeter et envoyer email' : 'Consultez d\'abord la candidature'">
+                        <i class="feather icon-x"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Validation Rapide -->
+<div class="modal fade" id="quickValidateModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title">
+          <i class="feather icon-check me-2"></i>
+          Valider {{ selectedCandidateName }}
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="quickValidateForm">
+          <div class="mb-3">
+            <label class="form-label">Message de validation</label>
+            <textarea class="form-control" rows="4" formControlName="message"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          <i class="feather icon-x me-1"></i>Annuler
+        </button>
+        <button type="button" class="btn btn-success" (click)="confirmQuickValidation()">
+          <i class="feather icon-send me-1"></i>Valider et envoyer
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Rejet Rapide -->
+<div class="modal fade" id="quickRejectModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title">
+          <i class="feather icon-x me-2"></i>
+          Rejeter {{ selectedCandidateName }}
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="quickRejectForm">
+          <div class="mb-3">
+            <label class="form-label">Raison du rejet</label>
+            <textarea class="form-control" rows="4" formControlName="message"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          <i class="feather icon-x me-1"></i>Annuler
+        </button>
+        <button type="button" class="btn btn-danger" (click)="confirmQuickRejection()">
+          <i class="feather icon-send me-1"></i>Rejeter et envoyer
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Validation en lot -->
+<div class="modal fade" id="bulkValidateModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title">
+          <i class="feather icon-check me-2"></i>
+          Valider {{ selectedApplications.length }} candidature(s)
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-info">
+          <i class="feather icon-info me-2"></i>
+          <strong>Candidatures sélectionnées :</strong>
+          <ul class="mb-0 mt-2">
+            <li *ngFor="let appId of selectedApplications">
+              {{ getCandidateName(appId) }}
+            </li>
+          </ul>
+        </div>
+        <form [formGroup]="bulkValidateForm">
+          <div class="mb-3">
+            <label class="form-label">Date d'entretien (optionnel)</label>
+            <input type="datetime-local" class="form-control" formControlName="interviewDate" (change)="updateBulkValidationTemplate()">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Message personnalisé</label>
+            <textarea class="form-control" rows="8" formControlName="message"></textarea>
+            <div class="form-text">Le placeholder [nom du candidat] sera remplacé par le nom de chaque candidat.</div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          <i class="feather icon-x me-1"></i>Annuler
+        </button>
+        <button type="button" class="btn btn-success" (click)="confirmBulkValidation()">
+          <i class="feather icon-send me-1"></i>Envoyer les emails
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Rejet en lot -->
+<div class="modal fade" id="bulkRejectModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title">
+          <i class="feather icon-x me-2"></i>
+          Rejeter {{ selectedApplications.length }} candidature(s)
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-warning">
+          <i class="feather icon-alert-triangle me-2"></i>
+          <strong>Candidatures sélectionnées :</strong>
+          <ul class="mb-0 mt-2">
+            <li *ngFor="let appId of selectedApplications">
+              {{ getCandidateName(appId) }}
+            </li>
+          </ul>
+        </div>
+        <form [formGroup]="bulkRejectForm">
+          <div class="mb-3">
+            <label class="form-label">Message de rejet</label>
+            <textarea class="form-control" rows="8" formControlName="message"></textarea>
+            <div class="form-text">Le placeholder [nom du candidat] sera remplacé par le nom de chaque candidat.</div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          <i class="feather icon-x me-1"></i>Annuler
+        </button>
+        <button type="button" class="btn btn-danger" (click)="confirmBulkRejection()">
+          <i class="feather icon-send me-1"></i>Envoyer les emails
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

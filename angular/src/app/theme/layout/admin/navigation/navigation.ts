@@ -69,6 +69,13 @@ export const NavigationItems: NavigationItem[] = [
             title: 'Rejetées',
             type: 'item',
             url: '/applications/rejected'
+          },
+          {
+            id: 'archived',
+            title: 'Archivées',
+            type: 'item',
+            url: '/applications/archived',
+            icon: 'feather icon-lock'
           }
         ]
       },

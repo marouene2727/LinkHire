@@ -1,0 +1,54 @@
+services:
+  database:
+    image: mariadb:10.6
+    container_name: recruitment-db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: recruitment_db
+      MYSQL_USER: recruitment_user
+      MYSQL_PASSWORD: recruitment_pass
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - recruitment-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: recruitment-backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mariadb://database:3306/recruitment_db
+      SPRING_DATASOURCE_USERNAME: recruitment_user
+      SPRING_DATASOURCE_PASSWORD: recruitment_pass
+      JWT_SECRET: mySecretKey123456789012345678901234567890
+      SPRING_MAIL_USERNAME: marouene.essanaa9@gmail.com
+      SPRING_MAIL_PASSWORD: labi oyvg mzdz bihz
+    ports:
+      - "8080:8080"
+    depends_on:
+      - database
+    networks:
+      - recruitment-network
+
+  frontend:
+    build:
+      context: ./angular
+      dockerfile: Dockerfile
+    container_name: recruitment-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - recruitment-network
+    
+
+volumes:
+  db_data:
+
+networks:
+  recruitment-network:
+    driver: bridge

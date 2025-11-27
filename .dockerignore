@@ -1,0 +1,55 @@
+# Backend (Spring Boot)
+backend/target/
+backend/.mvn/
+backend/mvnw
+backend/mvnw.cmd
+backend/HELP.md
+backend/uploads/
+
+# Frontend (Angular)
+angular/node_modules/
+angular/dist/
+angular/tmp/
+angular/out-tsc/
+angular/.angular/
+angular/coverage/
+angular/package-lock.json
+angular/yarn-error.log
+angular/npm-debug.log
+
+# IDEs and editors
+.idea/
+*.iws
+*.iml
+*.ipr
+.vscode/
+.history/
+.classpath
+.project
+.settings/
+.springBeans
+.sts4-cache
+*.launch
+*.sublime-workspace
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git et documentation
+.git
+.gitignore
+README.md
+help/
+angularBase/
+
+# Configuration sensible
+.env
+application-local.yml
+application-prod.yml
+
+# Logs et cache
+*.log
+.nyc_output
+coverage
+.sass-cache/

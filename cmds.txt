@@ -9,3 +9,20 @@ cd backend
 mvnw.cmd clean compile (faire "rmdir /s /q target" avant en cas d'erreur)
 
 mvnw.cmd spring-boot:run
+
+
+pour docker 
+
+> cd backend
+nettoyer : > rmdir /s /q target 
+> mvnw.cmd clean package -DskipTests
+> cd ..
+
+> docker-compose up --build -d
+
+
+pour fermer les conteneurs
+docker-compose down
+
+check le status des conteneurs
+docker-compose ps

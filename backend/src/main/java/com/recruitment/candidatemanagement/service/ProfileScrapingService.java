@@ -1,8 +1,6 @@
 package com.recruitment.candidatemanagement.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 

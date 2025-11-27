@@ -4,8 +4,8 @@
       <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
           <div>
-            <h4 class="mb-1">{{ application.candidate?.firstName }} {{ application.candidate?.lastName }}</h4>
-            <p class="text-muted mb-0">Candidature pour {{ application.jobOffer?.title }}</p>
+            <h4 class="mb-1">{{ application.candidate.firstName }} {{ application.candidate.lastName }}</h4>
+            <p class="text-muted mb-0">Candidature pour {{ application.jobOffer.title }}</p>
           </div>
           <div class="d-flex gap-2 flex-wrap">
             <span class="badge" [ngClass]="getStatusClass(application.status)">
@@ -40,26 +40,26 @@
                   <div class="flex-grow-1">
                     <div class="row">
                       <div class="col-md-6">
-                        <p><strong>Email:</strong> {{ application.candidate?.email }}</p>
-                        <p *ngIf="application.candidate?.phone"><strong>Téléphone:</strong> {{ application.candidate?.phone }}</p>
-                        <p *ngIf="application.candidate?.location"><strong>Localisation:</strong> {{ application.candidate?.location }}</p>
+                        <p><strong>Email:</strong> {{ application.candidate.email }}</p>
+                        <p *ngIf="application.candidate.phone"><strong>Téléphone:</strong> {{ application.candidate.phone }}</p>
+                        <p *ngIf="application.candidate.location"><strong>Localisation:</strong> {{ application.candidate.location }}</p>
                       </div>
                       <div class="col-md-6">
-                        <p *ngIf="application.candidate?.currentPosition"><strong>Poste actuel:</strong> {{ application.candidate?.currentPosition }}</p>
-                        <p *ngIf="application.candidate?.currentCompany"><strong>Entreprise:</strong> {{ application.candidate?.currentCompany }}</p>
-                        <p *ngIf="application.candidate?.yearsExperience"><strong>Expérience:</strong> {{ application.candidate?.yearsExperience }} ans</p>
+                        <p *ngIf="application.candidate.currentPosition"><strong>Poste actuel:</strong> {{ application.candidate.currentPosition }}</p>
+                        <p *ngIf="application.candidate.currentCompany"><strong>Entreprise:</strong> {{ application.candidate.currentCompany }}</p>
+                        <p *ngIf="application.candidate.yearsExperience"><strong>Expérience:</strong> {{ application.candidate.yearsExperience }} ans</p>
                       </div>
                     </div>
                     <div class="d-flex flex-wrap gap-3">
-                      <p *ngIf="application.candidate?.linkedinProfile" class="mb-0">
+                      <p *ngIf="application.candidate.linkedinProfile" class="mb-0">
                         <strong>LinkedIn : </strong> 
-                        <a [href]="application.candidate?.linkedinProfile" target="_blank" class="linkedin-link">
+                        <a [href]="application.candidate.linkedinProfile" target="_blank" class="linkedin-link">
                           <i class="fab fa-linkedin me-1"></i>Voir le profil
                         </a>
                       </p>
-                      <p *ngIf="application.candidate?.githubProfile" class="mb-0">
+                      <p *ngIf="application.candidate.githubProfile" class="mb-0">
                         <strong>GitHub : </strong> 
-                        <a [href]="application.candidate?.githubProfile" target="_blank" class="github-link">
+                        <a [href]="application.candidate.githubProfile" target="_blank" class="github-link">
                           <i class="fab fa-github me-1"></i>Voir le profil
                         </a>
                       </p>
@@ -69,32 +69,32 @@
               </div>
               
               <!-- Compétences -->
-              <div class="mb-4" *ngIf="application.candidate?.skills">
+              <div class="mb-4" *ngIf="application.candidate.skills">
                 <h6 class="text-primary mb-3">Compétences</h6>
-                <p>{{ application.candidate?.skills }}</p>
+                <p>{{ application.candidate.skills }}</p>
               </div>
               
               <!-- Message de candidature -->
-              <div class="mb-4" *ngIf="application?.emailBody">
+              <div class="mb-4" *ngIf="application.emailBody">
                 <h6 class="text-primary mb-3">Message de candidature</h6>
                 <div class="bg-light p-3 rounded">
-                  <p class="mb-0" style="white-space: pre-line;">{{ application?.emailBody }}</p>
+                  <p class="mb-0" style="white-space: pre-line;">{{ application.emailBody }}</p>
                 </div>
               </div>
               
               <!-- Analyse IA -->
-              <div class="mb-4" *ngIf="application?.aiAnalysis">
+              <div class="mb-4" *ngIf="application.aiAnalysis">
                 <h6 class="text-primary mb-3">Analyse IA</h6>
                 <div class="ai-analysis-card p-3 rounded">
-                  <div class="ai-analysis-text mb-0" [innerHTML]="formatAiAnalysis(application?.aiAnalysis || '')"></div>
+                  <div class="ai-analysis-text mb-0" [innerHTML]="formatAiAnalysis(application.aiAnalysis || '')"></div>
                 </div>
               </div>
               
               <!-- Notes du recruteur -->
-              <div class="mb-4" *ngIf="application?.recruiterNotes">
+              <div class="mb-4" *ngIf="application.recruiterNotes">
                 <h6 class="text-primary mb-3">Notes du recruteur</h6>
                 <div class="bg-warning bg-opacity-10 p-3 rounded">
-                  <p class="mb-0" style="white-space: pre-line;">{{ application?.recruiterNotes }}</p>
+                  <p class="mb-0" style="white-space: pre-line;">{{ application.recruiterNotes }}</p>
                 </div>
               </div>
             </div>
@@ -109,32 +109,32 @@
                   
                   <div class="mb-3">
                     <strong>Reçue le:</strong><br>
-                    {{ application?.receivedAt ? formatDate(application.receivedAt) : '-' }}
+                    {{ application.receivedAt ? formatDate(application.receivedAt) : '-' }}
                   </div>
                   
                   <div class="mb-3">
                     <strong>Poste:</strong><br>
-                    {{ application.jobOffer?.title || '-' }}
+                    {{ application.jobOffer.title || '-' }}
                   </div>
                   
                   <div class="mb-3">
                     <strong>Entreprise:</strong><br>
-                    {{ application.jobOffer?.company || '-' }}
+                    {{ application.jobOffer.company || '-' }}
                   </div>
                   
                   <div class="mb-3">
                     <strong>Lieu:</strong><br>
-                    {{ application.jobOffer?.location || '-' }}
+                    {{ application.jobOffer.location || '-' }}
                   </div>
                   
                   <!-- Documents -->
                   <h6 class="text-primary mb-3 mt-4">Documents</h6>
                   
-                  <div *ngIf="!application?.documents || application.documents.length === 0" class="text-muted">
+                  <div *ngIf="!application.documents || application.documents.length === 0" class="text-muted">
                     Aucun document joint
                   </div>
                   
-                  <div *ngFor="let doc of application?.documents" class="mb-2">
+                  <div *ngFor="let doc of application.documents" class="mb-2">
                     <div class="d-flex justify-content-between align-items-center p-2 bg-white rounded border">
                       <div>
                         <i class="feather icon-file me-2"></i>
@@ -144,7 +144,7 @@
                       </div>
                       <div class="d-flex gap-1">
                         <button class="btn btn-outline-info btn-sm" 
-                                (click)="viewDocument(doc.id, doc.fileName)"
+                                (click)="viewDocument(doc.id)"
                                 title="Consulter">
                           <i class="feather icon-eye"></i>
                         </button>
@@ -162,23 +162,23 @@
                   
                   <div class="d-grid gap-2">
                     <button class="btn btn-success btn-sm" 
-                            *ngIf="!application?.archived"
+                            *ngIf="!application.archived"
                             (click)="openValidateModal()"
                             title="Valider et envoyer email au candidat">
                       <i class="feather icon-check me-1"></i>Valider
                     </button>
                     
                     <button class="btn btn-danger btn-sm" 
-                            *ngIf="!application?.archived"
+                            *ngIf="!application.archived"
                             (click)="openRejectModal()"
                             title="Rejeter et envoyer email au candidat">
                       <i class="feather icon-x me-1"></i>Rejeter
                     </button>
                     
-                    <div *ngIf="application?.archived" class="alert alert-secondary text-center">
+                    <div *ngIf="application.archived" class="alert alert-secondary text-center">
                       <i class="feather icon-lock me-2"></i>
                       <strong>Candidature archivée</strong><br>
-                      <small>Archivée le {{ application?.archivedAt ? formatDate(application.archivedAt!) : '-' }}</small>
+                      <small>Archivée le {{ application.archivedAt ? formatDate(application.archivedAt!) : '-' }}</small>
                     </div>
                     
                     <button class="btn btn-outline-primary btn-sm" 

@@ -5,7 +5,19 @@ import { HttpClient } from '@angular/common/http';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Location } from '@angular/common';
 
-declare let bootstrap: any;
+interface BootstrapModal {
+  show(): void;
+  hide(): void;
+}
+
+interface Bootstrap {
+  Modal: {
+    new(element: Element | null): BootstrapModal;
+    getInstance(element: Element | null): BootstrapModal | null;
+  };
+}
+
+declare let bootstrap: Bootstrap;
 
 interface ApplicationDetail {
   id: number;
@@ -150,7 +162,7 @@ export class ApplicationDetailComponent implements OnInit {
     return analysis.replace(/\\n/g, '<br>');
   }
 
-  viewDocument(docId: number, fileName: string): void {
+  viewDocument(docId: number): void {
     window.open(`http://localhost:8080/api/applications/documents/${docId}/download?token=view`, '_blank');
   }
 
@@ -175,20 +187,29 @@ export class ApplicationDetailComponent implements OnInit {
 
   openValidateModal(): void {
     this.validateForm.patchValue({ message: this.getValidationTemplate() });
-    const modal = new bootstrap.Modal(document.getElementById('validateModal'));
-    modal.show();
+    const element = document.getElementById('validateModal');
+    if (element) {
+      const modal = new bootstrap.Modal(element);
+      modal.show();
+    }
   }
 
   openRejectModal(): void {
     this.rejectForm.patchValue({ message: this.getRejectionTemplate() });
-    const modal = new bootstrap.Modal(document.getElementById('rejectModal'));
-    modal.show();
+    const element = document.getElementById('rejectModal');
+    if (element) {
+      const modal = new bootstrap.Modal(element);
+      modal.show();
+    }
   }
 
   openNotesModal(): void {
     this.notesForm.patchValue({ notes: this.application?.recruiterNotes || '' });
-    const modal = new bootstrap.Modal(document.getElementById('notesModal'));
-    modal.show();
+    const element = document.getElementById('notesModal');
+    if (element) {
+      const modal = new bootstrap.Modal(element);
+      modal.show();
+    }
   }
 
   openContactModal(): void {
@@ -196,8 +217,11 @@ export class ApplicationDetailComponent implements OnInit {
       subject: `Concernant votre candidature - ${this.application?.jobOffer?.title}`,
       message: ''
     });
-    const modal = new bootstrap.Modal(document.getElementById('contactModal'));
-    modal.show();
+    const element = document.getElementById('contactModal');
+    if (element) {
+      const modal = new bootstrap.Modal(element);
+      modal.show();
+    }
   }
 
   getValidationTemplate(): string {
@@ -250,7 +274,9 @@ export class ApplicationDetailComponent implements OnInit {
     }, { headers }).subscribe({
       next: () => {
         this.application!.status = 'VALIDATED';
-        bootstrap.Modal.getInstance(document.getElementById('validateModal')).hide();
+        const element = document.getElementById('validateModal');
+        const modalInstance = element ? bootstrap.Modal.getInstance(element) : null;
+        modalInstance?.hide();
         alert('Email de validation envoyé avec succès !');
       },
       error: (err) => {
@@ -269,7 +295,9 @@ export class ApplicationDetailComponent implements OnInit {
     }, { headers }).subscribe({
       next: () => {
         this.application!.status = 'REJECTED';
-        bootstrap.Modal.getInstance(document.getElementById('rejectModal')).hide();
+        const element = document.getElementById('rejectModal');
+        const modalInstance = element ? bootstrap.Modal.getInstance(element) : null;
+        modalInstance?.hide();
         alert('Email de rejet envoyé avec succès !');
       },
       error: (err) => {
@@ -288,7 +316,9 @@ export class ApplicationDetailComponent implements OnInit {
     }, { headers }).subscribe({
       next: () => {
         this.application!.recruiterNotes = this.notesForm.value.notes;
-        bootstrap.Modal.getInstance(document.getElementById('notesModal')).hide();
+        const element = document.getElementById('notesModal');
+        const modalInstance = element ? bootstrap.Modal.getInstance(element) : null;
+        modalInstance?.hide();
         alert('Notes sauvegardées avec succès !');
       },
       error: (err) => {
@@ -307,7 +337,9 @@ export class ApplicationDetailComponent implements OnInit {
       message: this.contactForm.value.message
     }, { headers }).subscribe({
       next: () => {
-        bootstrap.Modal.getInstance(document.getElementById('contactModal')).hide();
+        const element = document.getElementById('contactModal');
+        const modalInstance = element ? bootstrap.Modal.getInstance(element) : null;
+        modalInstance?.hide();
         alert('Email envoyé avec succès !');
       },
       error: (err) => {

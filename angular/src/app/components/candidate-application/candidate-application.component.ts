@@ -4,17 +4,37 @@ import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
-interface CandidateApplication {
-  firstName: string;
-  lastName: string;
-  phone: string;
-  email: string;
-  linkedinUrl?: string;
-  githubUrl?: string;
-  cv?: File;
-  coverLetter?: File;
-  message: string;
+interface JobOfferData {
+  id: number;
+  title: string;
+  company: string;
+  location: string;
+  contractType: string;
+  salaryMin?: number;
+  salaryMax?: number;
+  experienceMin?: number;
+  experienceMax?: number;
+  description?: string;
+  requiredSkills?: string;
+  languages?: string;
+  certifications?: string;
+  benefits?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  teletravail?: string;
 }
+
+// interface CandidateApplication {
+//   firstName: string;
+//   lastName: string;
+//   phone: string;
+//   email: string;
+//   linkedinUrl?: string;
+//   githubUrl?: string;
+//   cv?: File;
+//   coverLetter?: File;
+//   message: string;
+// }
 
 @Component({
   selector: 'app-candidate-application',
@@ -271,14 +291,14 @@ export class CandidateApplicationComponent implements OnInit {
 
   applicationForm: FormGroup;
   isSubmitting = false;
-  jobOffer: any = null;
+  jobOffer: JobOfferData | null = null;
   jobId: string | null = null;
 
   constructor() {
     this.applicationForm = this.fb.group({
       firstName: ['', [Validators.required, Validators.minLength(2)]],
       lastName: ['', [Validators.required, Validators.minLength(2)]],
-      phone: ['', [Validators.required, Validators.pattern(/^[+]?[0-9\s\-\(\)]{10,}$/)]],
+      phone: ['', [Validators.required, Validators.pattern(/^[+]?[0-9\s\-()]{10,}$/)]],
       email: ['', [Validators.required, Validators.email]],
       linkedinUrl: ['', [Validators.pattern(/^https:\/\/(www\.)?linkedin\.com\/.*$/)]],
       githubUrl: ['', [Validators.pattern(/^https:\/\/(www\.)?github\.com\/.*$/)]],
@@ -307,7 +327,7 @@ export class CandidateApplicationComponent implements OnInit {
     
     console.log('Chargement de l\'offre depuis:', endpoint);
       
-    this.http.get(endpoint)
+    this.http.get<JobOfferData>(endpoint)
       .subscribe({
         next: (jobOffer) => {
           console.log('Offre chargée:', jobOffer);
@@ -317,10 +337,10 @@ export class CandidateApplicationComponent implements OnInit {
           console.error('Erreur lors du chargement de l\'offre:', error);
           if (error.status === 410) {
             alert('Cette offre d\'emploi n\'est plus disponible. Elle a été clôturée par le recruteur.');
-            this.router.navigate(['/']);
+            window.close();
           } else if (error.status === 404) {
             alert('Offre d\'emploi non trouvée.');
-            this.router.navigate(['/']);
+            window.close();
           }
         }
       });
@@ -404,7 +424,7 @@ export class CandidateApplicationComponent implements OnInit {
             console.error('Erreur lors de l\'envoi de la candidature:', error);
             if (error.status === 410) {
               alert('Cette offre d\'emploi n\'est plus disponible. Elle a été clôturée pendant que vous remplissiez le formulaire.');
-              this.router.navigate(['/']);
+              window.close();
             } else {
               alert('Erreur lors de l\'envoi de la candidature. Veuillez réessayer.');
             }

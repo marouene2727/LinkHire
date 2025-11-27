@@ -31,7 +31,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         
         // Ignorer les endpoints publics
         String path = request.getRequestURI();
-        if (path.contains("/auth/") || path.startsWith("/h2-console") || path.contains("/job-offers/apply/") || path.equals("/error")) {
+        if (path.contains("/auth/") || path.startsWith("/h2-console") || 
+            path.contains("/job-offers/apply/") || path.contains("/applications/submit") || 
+            path.contains("/applications/documents/") || path.equals("/error")) {
             filterChain.doFilter(request, response);
             return;
         }

@@ -47,10 +47,10 @@ interface ApplicationListItem {
                   </thead>
                   <tbody>
                     <tr *ngFor="let app of applications">
-                      <td>{{ app.candidate?.lastName }} {{ app.candidate?.firstName }}</td>
-                      <td>{{ app.candidate?.email }}</td>
+                      <td>{{ app.candidate.lastName }} {{ app.candidate.firstName }}</td>
+                      <td>{{ app.candidate.email }}</td>
                       <td>{{ app.emailSubject }}</td>
-                      <td>{{ app.candidate?.phone || '-' }}</td>
+                      <td>{{ app.candidate.phone || '-' }}</td>
                       <td>{{ formatDate(app.receivedAt) }}</td>
                       <td>
                         <span class="badge" [ngClass]="getStatusClass(app.status)">
